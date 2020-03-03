@@ -7,6 +7,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading;
+using System.Threading.Tasks;
 using static System.Console;
 
 namespace FreakyFashionTerminal
@@ -15,10 +16,11 @@ namespace FreakyFashionTerminal
     {
         static void Main(string[] args)
         {
-      
-    bool running = true;
+            bool running = true;
+
             while (running)
             {
+            Meny:;
                 Clear();
                 WriteLine("1. Products");
                 WriteLine("2. Categories");
@@ -28,27 +30,28 @@ namespace FreakyFashionTerminal
                 ConsoleKeyInfo keypress = Console.ReadKey(true);
                 switch (keypress.Key)
                 {
-                   
+                    // start Product
                     case ConsoleKey.D1:
                     case ConsoleKey.NumPad1:
-                        productMeny:
+                    productMeny:
                         Clear();
-                    WriteLine("1. List Products");
-                    WriteLine("2. Add Product");
-                    WriteLine("3. Delete Product");
+                        WriteLine("1. List Products");
+                        WriteLine("2. Add Product");
+                        WriteLine("3. Delete Product");
                         keypress = Console.ReadKey(true);
                         switch (keypress.Key)
                         {
-                            
+
+                            // start list Product
+
                             case ConsoleKey.D1:
                             case ConsoleKey.NumPad1:
                             product:
                                 Clear();
-                                 
                                 List<Product> products = Products.Get();
                                 WriteLine("ID | Name");
                                 WriteLine("-------------------------------------------------------------------------------------");
-                                if(products.Count != 0)
+                                if (products.Count != 0)
                                 {
                                     foreach (var product in products)
                                     {
@@ -82,7 +85,7 @@ namespace FreakyFashionTerminal
                                         var num = Console.ReadLine();
                                         var id = Convert.ToInt32(num);
                                         Product product = Products.Get(id);
-                                        if(product != null)
+                                        if (product != null)
                                         {
                                             Clear();
                                             WriteLine("ID:" + product.Id);
@@ -96,22 +99,26 @@ namespace FreakyFashionTerminal
                                         }
 
 
-                                    keypress = ReadKey(true);
-                                        if(keypress.Key == ConsoleKey.Escape)
+                                        keypress = ReadKey(true);
+                                        if (keypress.Key == ConsoleKey.Escape)
                                         {
                                             goto product;
                                         }
                                         break;
 
-                                   
+                                    case ConsoleKey.Escape:
+                                        goto productMeny;
+
+
+
                                 }
-                           
+
 
                                 break;
 
                             case ConsoleKey.D2:
-                          
-                                AddProduct:
+
+                            AddProduct:
                                 Clear();
                                 Write("Product Name :");
                                 var ProductName = ReadLine();
@@ -122,7 +129,7 @@ namespace FreakyFashionTerminal
                                 Write("Product Image :");
                                 var ProductImage = ReadLine();
                                 Write("Product Price :");
-                                var ProductPrice =Int32.Parse(ReadLine());
+                                var ProductPrice = Int32.Parse(ReadLine());
 
                                 var productUrlSlug = ProductName.Replace(" ", "-");
                                 var NewProduct = new Product
@@ -134,14 +141,14 @@ namespace FreakyFashionTerminal
                                     ProductNumber = ProductNumebr,
                                     UrlSlug = productUrlSlug
                                 };
-                              
+
                                 WriteLine("Add Or Not: (Y or N) :");
 
-                              var add =  ReadKey(true);
+                                var add = ReadKey(true);
                                 switch (add.Key)
                                 {
                                     case ConsoleKey.Y:
-                                        if(NewProduct != null)
+                                        if (NewProduct != null)
                                         {
                                             Products.Post(NewProduct);
                                             WriteLine("Product added");
@@ -154,20 +161,19 @@ namespace FreakyFashionTerminal
                                         {
                                             WriteLine("Product is null i cant added");
                                         }
-                                    
+
                                         break;
                                     case ConsoleKey.N:
                                         goto AddProduct;
 
                                     case ConsoleKey.Escape:
                                         goto productMeny;
-                                       
+
                                     default:
                                         break;
                                 }
                                 break;
-                            case ConsoleKey.Escape:
-                                goto productMeny;
+
                             case ConsoleKey.D3:
                             case ConsoleKey.NumPad3:
                                 Clear();
@@ -178,7 +184,7 @@ namespace FreakyFashionTerminal
                                 {
                                     foreach (var product in _products)
                                     {
-                                        WriteLine("   "+product.Id + "               " + product.Name);
+                                        WriteLine("   " + product.Id + "               " + product.Name);
                                     }
                                 }
                                 else
@@ -187,7 +193,7 @@ namespace FreakyFashionTerminal
                                 }
                                 Write("Enter Product  ID :");
                                 var _id = Int32.Parse(ReadLine());
-                                if(_products.Any(x=>x.Id == _id))
+                                if (_products.Any(x => x.Id == _id))
                                 {
                                     Clear();
                                     Products.Delete(_id);
@@ -202,14 +208,16 @@ namespace FreakyFashionTerminal
                                     Thread.Sleep(2000);
                                     goto productMeny;
                                 }
-                               
-                               
+
+                            case ConsoleKey.Escape:
+                                goto Meny;
                         }
 
                         break;
 
-                       case ConsoleKey.D2:
-                       case ConsoleKey.NumPad2:
+                    case ConsoleKey.D2:
+                    case ConsoleKey.NumPad2:
+                    Category:;
                         Clear();
                         List<Category> categories = Categories.Get();
                         WriteLine("ID | Name");
@@ -254,30 +262,36 @@ namespace FreakyFashionTerminal
                                     WriteLine("ID:" + category.Id);
                                     WriteLine("Name:" + category.Name);
                                     WriteLine("Image URL:" + category.ImgUrl);
-                                   
+                                    Thread.Sleep(2000);
+                                    goto Category;
+
                                 }
                                 else
                                 {
                                     Clear();
                                     Write("Category Not Found");
+                                    Thread.Sleep(2000);
+                                    goto Category;
                                 }
-                                ReadKey(true);
 
-                                break;
-                            default:
-                                break;
+                            case ConsoleKey.Escape:
+                                goto Meny;
+
+
+
                         }
 
 
                         break;
-                    case ConsoleKey.Escape:
-                        Clear();
-                        break;
+
+
+                    // order
                     case ConsoleKey.D3:
                     case ConsoleKey.NumPad3:
+                    order:
                         Clear();
                         List<Order> orders = Orders.Get();
-                        WriteLine("ID | Name");
+                        WriteLine("ID | Totalt Price");
                         WriteLine("-------------------------------------------------------------------------------------");
                         if (orders.Count != 0)
                         {
@@ -296,7 +310,7 @@ namespace FreakyFashionTerminal
                         {
                             case ConsoleKey.V:
                                 Clear();
-                                WriteLine("ID | Name");
+                                WriteLine("ID | Totalt Price");
                                 WriteLine("-------------------------------------------------------------------------------------");
                                 if (orders.Count != 0)
                                 {
@@ -317,45 +331,63 @@ namespace FreakyFashionTerminal
                                 {
                                     Clear();
                                     WriteLine("ID:" + order.Id);
-                                    WriteLine("Totalt:" + order.Totalt);
-                                   
+                                    WriteLine("Totalt Pric:" + order.Totalt);
+                                    Thread.Sleep(2000);
+                                    goto order;
+
 
                                 }
                                 else
                                 {
                                     Clear();
                                     Write("Order Not Found");
+                                    Thread.Sleep(2000);
+                                    goto order;
                                 }
-                                ReadKey(true);
 
-                                break;
-                            default:
-                                break;
+
+                            case ConsoleKey.Escape:
+                                goto Meny;
+
                         }
 
 
                         break;
-                    
+
+                    case ConsoleKey.D4:
+                    case ConsoleKey.NumPad4:
+                        Clear();
+                        Write("Good Bye...........");
+                        Thread.Sleep(1000);
+                        running = true;
+                        break;
 
                 }
                 break;
-               
-                }
+
             }
         }
-   
+    }
+
 
 
     class Products
     {
-     readonly  static HttpClient client = new HttpClient();
+        readonly static HttpClient client = new HttpClient();
 
         public static List<Product> Get()
         {
             string endPoint = "https://localhost:5001/api/product";
-            var Jsondata = client.GetStringAsync(endPoint).GetAwaiter().GetResult();
-            var Products = JsonConvert.DeserializeObject<List<Product>>(Jsondata);
-            return Products;
+            var Jsondata = client.GetAsync(endPoint).Result;
+            if (Jsondata.IsSuccessStatusCode)
+            {
+                var data = Jsondata.Content.ReadAsStringAsync().Result;
+                var Products = JsonConvert.DeserializeObject<List<Product>>(data);
+
+                return Products;
+            }
+            return null;
+
         }
         public static Product Get(int id)
         {
@@ -378,13 +410,13 @@ namespace FreakyFashionTerminal
             var result = client.DeleteAsync(endPoint).Result;
 
         }
-        public static void Post(int id)
+        public static void Put(int id)
         {
             string endPoint = $"https://localhost:5001/api/product/{id}";
             var product = client.GetAsync(endPoint).GetAwaiter().GetResult();
             var jsonData = JsonConvert.SerializeObject(product);
             HttpContent content = new StringContent(jsonData, Encoding.UTF8, "appplication/json");
-            var result = client.PutAsync(endPoint,content).Result;
+            var result = client.PutAsync(endPoint, content).Result;
 
         }
 
@@ -404,10 +436,10 @@ namespace FreakyFashionTerminal
         }
         public static Category Get(int id)
         {
-        string endPoint = $"https://localhost:5001/api/Category/{id}";
-        var Jsondata = client.GetStringAsync(endPoint).GetAwaiter().GetResult();
-        var Category = JsonConvert.DeserializeObject<Category>(Jsondata);
-        return Category;
+            string endPoint = $"https://localhost:5001/api/Category/{id}";
+            var Jsondata = client.GetStringAsync(endPoint).GetAwaiter().GetResult();
+            var Category = JsonConvert.DeserializeObject<Category>(Jsondata);
+            return Category;
         }
 
     }
